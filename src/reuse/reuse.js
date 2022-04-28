@@ -34,3 +34,4 @@ export function regularCsaptcha(val) {
         return true
     }
 }
+

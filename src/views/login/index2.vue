@@ -38,35 +38,33 @@
           <el-form-item prop="captcha" clearable>
             <label>验证码</label>
             <el-row :gutter="20">
-              <el-col :span="14">
+              <el-col :span="16">
                 <el-input v-model="loginForm.captcha" clearable></el-input
               ></el-col>
-              <el-col :span="6">
-                <el-button
-                  class="login-CAPTCHA-btn"
-                  type="success"
-                  @click="loginRegisterCodeBtn(model)"
-                  :disabled="logindisabled"
-                  >{{ codebtntext }}</el-button
+              <el-col :span="4">
+                <el-button class="login-CAPTCHA-btn" type="success"
+                  >验证码</el-button
                 >
               </el-col>
             </el-row>
           </el-form-item>
-          <el-form-item v-if="model === 0">
-            <el-button class="login-button" type="danger" @click="zfgLogin()"
+          <el-form-item v-show="model === 0">
+            <el-button
+              class="login-button"
+              type="danger"
+              @click="submitloginForm('loginForm')"
               >登录</el-button
             >
           </el-form-item>
-          <el-form-item v-if="model === 1">
-            <el-button class="login-button" type="danger" @click="zfgRegister()"
-              >注册</el-button
-            >
+          <el-form-item v-show="model === 1">
+            <el-button class="login-button" type="danger">注册</el-button>
           </el-form-item>
         </el-form>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 // 引入正则,过滤特殊字符函数
 import {
@@ -75,10 +73,16 @@ import {
   regularPassword,
   regularCsaptcha,
 } from "../../reuse/reuse";
-import { loginCode, login, register } from "../../api/login";
+import {
+  reactive,
+  toRefs,
+  onBeforeMount,
+  onMounted,
+  ref,
+} from "@vue/composition-api";
 export default {
   name: "",
-  data() {
+  setup() {
     // 用户名验证
     var loginUsername = (rule, value, callback) => {
       if (value === "") {
@@ -92,8 +96,8 @@ export default {
     // 密码验证
     var loginPassword = (rule, value, callback) => {
       // 过滤特殊字符
-      this.loginForm.password = stripscript(value);
-      value = this.loginForm.password;
+      res.loginForm.password = stripscript(value);
+      value = res.loginForm.password;
 
       if (value === "") {
         callback(new Error("密码不能为空！"));
@@ -108,7 +112,7 @@ export default {
       // 过滤特殊字符
       if (value === "") {
         callback(new Error("密码不能为空！"));
-      } else if (value != this.loginForm.password) {
+      } else if (value != res.loginForm.password) {
         callback(new Error("重复密码不正确！"));
       } else {
         callback();
@@ -117,8 +121,8 @@ export default {
     // 验证码验证
     var loginCsaptcha = (rule, value, callback) => {
       // 过滤特殊字符
-      this.loginForm.captcha = stripscript(value);
-      value = this.loginForm.captcha;
+      res.loginForm.captcha = stripscript(value);
+      value = res.loginForm.captcha;
 
       if (value === "") {
         callback(new Error("验证码不能为空！"));
@@ -128,21 +132,14 @@ export default {
         callback();
       }
     };
-    return {
-      // 登录注册按钮切换
+    const res = reactive({
       model: 0,
-      // 登录注册tab切换
       curId: 0,
-      // 判断验证码的按钮禁用状态
-      logindisabled: false,
-      // 判断验证码的文字状态
-      codebtntext: "验证码",
       items: [{ item: "登录" }, { item: "注册" }],
-
       loginForm: {
-        username: "393086316@qq.com",
-        password: "zfg111111",
-        passwords: "zfg111111",
+        username: "",
+        password: "",
+        passwords: "",
         captcha: "",
       },
       loginrules: {
@@ -151,127 +148,22 @@ export default {
         passwords: [{ validator: loginPasswords, trigger: "blur" }],
         captcha: [{ validator: loginCsaptcha, trigger: "blur" }],
       },
+    });
+    const tab = (index) => {
+      res.curId = index;
+      Ï;
+      res.model = index;
     };
-  },
-  created() {},
-  computed: {},
-  methods: {
-    // tab切换
-    tab(index) {
-      this.curId = index;
-      this.model = index;
-      this.codebtntext = "验证码";
-      this.$nextTick(() => {
-        this.$refs["loginForm"].resetFields();
-      });
-    },
-    // 登录注册验证码按钮
-    loginRegisterCodeBtn(val) {
-      if (val == 0) {
-        this.CodeLoginRegister("login");
-        console.log(val);
-      } else {
-        this.CodeLoginRegister("register");
-        console.log(val);
-      }
-    },
-    // 获取登录注册验证码
-    CodeLoginRegister(val) {
-      if (this.loginForm.username == "") {
-        return this.$message({
-          showClose: true,
-          message: "用户名不能为空！！！",
-          type: "warning",
-          center: true,
-        });
-      }
-      setTimeout(async () => {
-        const res = await loginCode({
-          username: this.loginForm.username,
-          module: val,
-        });
-        // 393086316@qq.com
-        if (res.data.resCode == 0) {
-          this.logindisabled = true;
-          this.codebtntext = "发送中";
-          this.$message({
-            message: res.data.message,
-            type: "success",
-            duration: 5000,
-          });
-          this.timecount(10);
-        }
-      }, 1000);
-    },
-    // 验证码倒计时函数
-    timecount(val) {
-      if (times) {
-        clearInterval(times);
-      }
-      let time = val;
-      let times;
-      times = setInterval(() => {
-        time--;
-        if (time === 0) {
-          clearInterval(times);
-          (this.logindisabled = false), (this.codebtntext = "重新发送");
-        } else {
-          this.codebtntext = `倒计时${time}秒`;
-        }
-      }, 1000);
-    },
-    // 登录
-    async zfgLogin() {
-      try {
-        const res = await login({
-          username: this.loginForm.username,
-          password: this.loginForm.password,
-          code: this.loginForm.captcha,
-        });
-        if (res.data.resCode == 0) {
-          this.$message({
-            message: res.data.message,
-            type: "success",
-          });
-        } else {
-          this.$message({
-            message: res.data.message,
-            type: "error",
-          });
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    // 注册
-    async zfgRegister() {
-      try {
-        const res = await register({
-          username: this.loginForm.username,
-          password: this.loginForm.password,
-          code: this.loginForm.captcha,
-        });
-
-        if (res.data.resCode == 0) {
-          this.$message({
-            message: res.data.message,
-            type: "success",
-          });
-        } else {
-          this.$message({
-            message: res.data.message,
-            type: "error",
-          });
-          this.$nextTick(() => {
-            this.$refs["loginForm"].resetFields();
-          });
-        }
-      } catch {}
-    },
+    onBeforeMount(() => {});
+    onMounted(() => {});
+    return {
+      ...toRefs(res),
+      tab,
+    };
   },
 };
 </script>
-<style lang='scss' scoped>
+<style scoped lang='scss'>
 .zfg-login {
   width: 100%;
   height: 100vh;
