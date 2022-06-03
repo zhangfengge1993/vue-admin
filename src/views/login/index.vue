@@ -38,26 +38,29 @@
           <el-form-item prop="captcha" clearable>
             <label>验证码</label>
             <el-row :gutter="20">
-              <el-col :span="16">
+              <el-col :span="14">
                 <el-input v-model="loginForm.captcha" clearable></el-input
               ></el-col>
-              <el-col :span="4">
-                <el-button class="login-CAPTCHA-btn" type="success"
-                  >验证码</el-button
+              <el-col :span="6">
+                <el-button
+                  class="login-CAPTCHA-btn"
+                  type="success"
+                  @click="loginRegisterCodeBtn(model)"
+                  :disabled="logindisabled"
+                  >{{ codebtntext }}</el-button
                 >
               </el-col>
             </el-row>
           </el-form-item>
-          <el-form-item v-show="model === 0">
-            <el-button
-              class="login-button"
-              type="danger"
-              @click="submitloginForm('loginForm')"
+          <el-form-item v-if="model === 0">
+            <el-button class="login-button" type="danger" @click="zfgLogin()"
               >登录</el-button
             >
           </el-form-item>
-          <el-form-item v-show="model === 1">
-            <el-button class="login-button" type="danger">注册</el-button>
+          <el-form-item v-if="model === 1">
+            <el-button class="login-button" type="danger" @click="zfgRegister()"
+              >注册</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -85,7 +88,7 @@ export default {
         callback();
       }
     };
-    // 密码验证
+    // 密码验证;
     var loginPassword = (rule, value, callback) => {
       // 过滤特殊字符
       this.loginForm.password = stripscript(value);
@@ -125,41 +128,132 @@ export default {
       }
     };
     return {
-      model: 0,
+      // 登录注册按钮切换
+      // model: 0,
+      // 登录注册tab切换
       curId: 0,
-      items: [{ item: "登录" }, { item: "注册" }],
-      loginForm: {
-        username: "",
-        password: "",
-        passwords: "",
-        captcha: "",
-      },
+      // 判断验证码的按钮禁用状态
+      logindisabled: false,
+      // 判断验证码的文字状态
+      codebtntext: "验证码",
       loginrules: {
         username: [{ validator: loginUsername, trigger: "blur" }],
         password: [{ validator: loginPassword, trigger: "blur" }],
         passwords: [{ validator: loginPasswords, trigger: "blur" }],
         captcha: [{ validator: loginCsaptcha, trigger: "blur" }],
       },
+      
     };
   },
   created() {},
-  computed: {},
+  mounted() {},
+  computed: {
+    // 切换按钮
+    items() {
+      return this.$store.state.login.items;
+    },
+    // 登陆组册表单
+    loginForm() {
+      return this.$store.state.login.loginForm;
+    },
+    // 登录注册按钮切换状态码
+    model: {
+      get() {
+        return this.$store.state.login.model;
+      },
+      set(newValue) {
+        this.$store.state.login.model = newValue;
+      },
+    },
+  },
   methods: {
     // tab切换
     tab(index) {
       this.curId = index;
       this.model = index;
-    },
-    submitloginForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-          console.log(this.loginForm);
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
+      this.codebtntext = "验证码";
+      this.$nextTick(() => {
+        this.$refs["loginForm"].resetFields();
       });
+    },
+    // 登录注册验证码按钮
+    loginRegisterCodeBtn(val) {
+      if (val == 0) {
+        this.CodeLoginRegister("login");
+        // console.log(val);
+      } else {
+        this.CodeLoginRegister("register");
+        // console.log(val);
+      }
+    },
+    // 获取登录注册验证码
+    CodeLoginRegister(val) {
+      if (this.loginForm.username == "") {
+        return this.$message({
+          showClose: true,
+          message: "用户名不能为空！！！",
+          type: "warning",
+          center: true,
+        });
+      }
+      setTimeout(async () => {
+        const res = await this.$store.dispatch("login/loginCode", {
+          username: this.loginForm.username,
+          module: val,
+        });
+        // 393086316@qq.com
+        if (res) {
+          this.logindisabled = true;
+          this.codebtntext = "发送中";
+          this.timecount(10);
+        }
+      }, 1000);
+    },
+    // 验证码倒计时函数
+    timecount(val) {
+      if (times) {
+        clearInterval(times);
+      }
+      let time = val;
+      let times;
+      times = setInterval(() => {
+        time--;
+        if (time === 0) {
+          clearInterval(times);
+          (this.logindisabled = false), (this.codebtntext = "重新发送");
+        } else {
+          this.codebtntext = `倒计时${time}秒`;
+        }
+      }, 1000);
+    },
+    // 登录
+    async zfgLogin() {
+      try {
+        await this.$store.dispatch("login/login", {
+          username: this.loginForm.username,
+          password: this.loginForm.password,
+          code: this.loginForm.captcha,
+        });
+        this.$router.push("/console");
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    // 注册
+    async zfgRegister() {
+      try {
+        await this.$store.dispatch("login/register", {
+          username: this.loginForm.username,
+          password: this.loginForm.password,
+          code: this.loginForm.captcha,
+        });
+        this.$nextTick(() => {
+          this.$refs["loginForm"].resetFields();
+        });
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 };
@@ -177,7 +271,7 @@ export default {
     height: 700px;
     margin: 0 auto;
     margin-top: 100px;
-    transition: 1s;
+    transition: 2s;
     background-color: transparent;
   }
   .zfg-login-btn {
