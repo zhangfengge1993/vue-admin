@@ -75,7 +75,6 @@ import {
   regularPassword,
   regularCsaptcha,
 } from "../../reuse/reuse";
-import { loginCode, login, register } from "../../api/login";
 export default {
   name: "",
   data() {
@@ -89,7 +88,7 @@ export default {
         callback();
       }
     };
-    // 密码验证
+    // 密码验证;
     var loginPassword = (rule, value, callback) => {
       // 过滤特殊字符
       this.loginForm.password = stripscript(value);
@@ -130,31 +129,43 @@ export default {
     };
     return {
       // 登录注册按钮切换
-      model: 0,
+      // model: 0,
       // 登录注册tab切换
       curId: 0,
       // 判断验证码的按钮禁用状态
       logindisabled: false,
       // 判断验证码的文字状态
       codebtntext: "验证码",
-      items: [{ item: "登录" }, { item: "注册" }],
-
-      loginForm: {
-        username: "393086316@qq.com",
-        password: "zfg111111",
-        passwords: "zfg111111",
-        captcha: "",
-      },
       loginrules: {
         username: [{ validator: loginUsername, trigger: "blur" }],
         password: [{ validator: loginPassword, trigger: "blur" }],
         passwords: [{ validator: loginPasswords, trigger: "blur" }],
         captcha: [{ validator: loginCsaptcha, trigger: "blur" }],
       },
+      
     };
   },
   created() {},
-  computed: {},
+  mounted() {},
+  computed: {
+    // 切换按钮
+    items() {
+      return this.$store.state.login.items;
+    },
+    // 登陆组册表单
+    loginForm() {
+      return this.$store.state.login.loginForm;
+    },
+    // 登录注册按钮切换状态码
+    model: {
+      get() {
+        return this.$store.state.login.model;
+      },
+      set(newValue) {
+        this.$store.state.login.model = newValue;
+      },
+    },
+  },
   methods: {
     // tab切换
     tab(index) {
@@ -169,10 +180,10 @@ export default {
     loginRegisterCodeBtn(val) {
       if (val == 0) {
         this.CodeLoginRegister("login");
-        console.log(val);
+        // console.log(val);
       } else {
         this.CodeLoginRegister("register");
-        console.log(val);
+        // console.log(val);
       }
     },
     // 获取登录注册验证码
@@ -186,19 +197,14 @@ export default {
         });
       }
       setTimeout(async () => {
-        const res = await loginCode({
+        const res = await this.$store.dispatch("login/loginCode", {
           username: this.loginForm.username,
           module: val,
         });
         // 393086316@qq.com
-        if (res.data.resCode == 0) {
+        if (res) {
           this.logindisabled = true;
           this.codebtntext = "发送中";
-          this.$message({
-            message: res.data.message,
-            type: "success",
-            duration: 5000,
-          });
           this.timecount(10);
         }
       }, 1000);
@@ -223,50 +229,31 @@ export default {
     // 登录
     async zfgLogin() {
       try {
-        const res = await login({
+        await this.$store.dispatch("login/login", {
           username: this.loginForm.username,
           password: this.loginForm.password,
           code: this.loginForm.captcha,
         });
-        if (res.data.resCode == 0) {
-          this.$message({
-            message: res.data.message,
-            type: "success",
-          });
-        } else {
-          this.$message({
-            message: res.data.message,
-            type: "error",
-          });
-        }
+        this.$router.push("/console");
       } catch (err) {
         console.log(err);
       }
     },
+
     // 注册
     async zfgRegister() {
       try {
-        const res = await register({
+        await this.$store.dispatch("login/register", {
           username: this.loginForm.username,
           password: this.loginForm.password,
           code: this.loginForm.captcha,
         });
-
-        if (res.data.resCode == 0) {
-          this.$message({
-            message: res.data.message,
-            type: "success",
-          });
-        } else {
-          this.$message({
-            message: res.data.message,
-            type: "error",
-          });
-          this.$nextTick(() => {
-            this.$refs["loginForm"].resetFields();
-          });
-        }
-      } catch {}
+        this.$nextTick(() => {
+          this.$refs["loginForm"].resetFields();
+        });
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 };

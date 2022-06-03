@@ -1,7 +1,9 @@
+// 引入 axios
 import axios from 'axios'
 import {
     Message
 } from 'element-ui';
+// 创建一个拦截器
 const instance = axios.create({
     baseURL: process.env.VUE_APP_API, // 请求地址
     timeout: 15000, // 超时
