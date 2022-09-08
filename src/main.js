@@ -17,12 +17,17 @@ import Cookies from "js-cookie";
 import ElementUI from 'element-ui';
 // 引入ElementUI css 样式
 import 'element-ui/lib/theme-chalk/index.css';
+import 'default-passive-events'
+// 引入globalMethod 全局方法
+import globalMethod from "./reuse/globalMethod"
 // 把Cookies 挂载到vue 原型
 Vue.prototype.$cookie = Cookies;
 // 关闭生产模式下给出的提示
 Vue.config.productionTip = false;
 // 通过全局方法使用插件ElementUI插件
 Vue.use(ElementUI);
+// 通过全局方法使用globalMethod
+Vue.use(globalMethod);
 // 通过全局方法使用插件VueCompositionApi插件
 Vue.use(VueCompositionApi);
 // 创建vue实例对象

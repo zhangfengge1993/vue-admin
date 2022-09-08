@@ -102,7 +102,7 @@ export default {
         loginForm: {
             username: "393086316@qq.com",
             password: "zfg111111",
-            passwords: "zfg111111",
+            passwords: "",
             captcha: "",
         },
         // 切换按钮

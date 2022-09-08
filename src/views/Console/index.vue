@@ -38,7 +38,7 @@
                   :key="i.id"
                 >
                   <i class="el-icon-menu"></i>
-                  {{ item.meta ? item.meta.title : "" }}</el-menu-item
+                  {{ i.meta ? i.meta.title : "" }}</el-menu-item
                 >
               </el-menu-item-group>
             </el-submenu>
@@ -46,14 +46,13 @@
         </el-menu>
       </el-aside>
       <el-main>
-        <router-view></router-view>
+        <el-card class="box-card"> <router-view></router-view></el-card>
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
-import { menus } from "../../api/role";
 import { getiscollapse, setiscollapse } from "../../reuse/tokenapi";
 export default {
   // import引入的组件需要注入到对象中才能使用
@@ -109,7 +108,6 @@ export default {
     },
     // 折叠按钮
     toggleCollp() {
-      console.log(this.$router);
       this.$store.commit("login/set_iscollapse");
       let togglebutton = document.querySelector(".togglebutton");
       if (this.iscollapse) {
@@ -185,5 +183,13 @@ export default {
 }
 .el-main {
   background: #ededf1;
+}
+::v-deep .el-menu-item,
+::v-deep .el-submenu__title {
+  font-size: 12px;
+  font-weight: 900;
+}
+.box-card {
+  height: 100%;
 }
 </style>

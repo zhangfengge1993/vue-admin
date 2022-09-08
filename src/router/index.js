@@ -29,7 +29,7 @@ const routes = [{
         name: "main",
         component: () => import("../views/Console/main/index.vue"),
         meta: {
-          title: '主页',
+          title: '主页1',
         }
       },
       {
@@ -37,7 +37,35 @@ const routes = [{
         name: "main2",
         component: () => import("../views/Console/main/index2.vue"),
         meta: {
-          title: '主页',
+          title: '主页2',
+        }
+      },
+
+    ]
+  },
+  {
+    path: "/message",
+    name: "message",
+    redirect: '/messagelist',
+    component: () => import("../views/Console/index.vue"),
+    meta: {
+      title: '信息管理',
+      icon: '103'
+    },
+    children: [{
+        path: "/messagelist",
+        name: "messagelist",
+        component: () => import("../views/messages/messagelist.vue"),
+        meta: {
+          title: '信息列表',
+        }
+      },
+      {
+        path: "/messageclassify",
+        name: "messageclassify",
+        component: () => import("../views/messages/messageclassify.vue"),
+        meta: {
+          title: '信息分类',
         }
       },
     ]

@@ -142,7 +142,6 @@ export default {
         passwords: [{ validator: loginPasswords, trigger: "blur" }],
         captcha: [{ validator: loginCsaptcha, trigger: "blur" }],
       },
-      
     };
   },
   created() {},
@@ -273,6 +272,9 @@ export default {
     margin-top: 100px;
     transition: 2s;
     background-color: transparent;
+  }
+  .el-button--success {
+    font-size: 12px;
   }
   .zfg-login-btn {
     width: 100%;
