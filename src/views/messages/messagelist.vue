@@ -56,7 +56,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="danger" @click="addDialogVisible = true"
-            >新增信息</el-button
+            >新增</el-button
           >
         </el-form-item>
       </div>
