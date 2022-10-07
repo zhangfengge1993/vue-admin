@@ -51,11 +51,11 @@ export default {
       DialogVisible: false,
       form: {
         categoryId: "",
-        id: 0,
+        id: "",
         content: "",
         create_date: "2016-05-02",
-        image_url: "",
-        status: "",
+        image_url: "http://qv18xxim7.hn-bkt.clouddn.com/1-7.jpg",
+        status: "1",
         title: "",
         region: [],
       },
@@ -96,6 +96,7 @@ export default {
         this.form.title = this.infodata.title;
         this.form.id = this.infodata.id;
         this.form.content = this.infodata.content;
+        this.form.categoryId = this.infodata.categoryId;
       }
     },
 
@@ -112,9 +113,8 @@ export default {
         const res = await this.$store.dispatch("information/newsadd", {
           category_id: this.form.categoryId,
           content: this.form.content,
-          create_date: "",
-          image_url: "",
-          status: "",
+          create_date: this.form.create_date,
+          // status: "1",
           title: this.form.title,
         });
         // this.$nextTick(() => {
@@ -122,27 +122,29 @@ export default {
         // });
         this.$emit("infogetlist");
         this.DialogVisible = false;
-      } catch (err) {}
+      } catch (err) {
+        console.log(err);
+      }
     },
     async infonews() {
       try {
         const res = await this.$store.dispatch("information/newseditInfo", {
           id: Number(this.form.id),
-          category_id: Number(this.form.categoryId),
+          categoryId: Number(this.form.categoryId),
           title: this.form.title,
-          img_url: "http://qv18xxim7.hn-bkt.clouddn.com/1-7.jpg",
-          status: "1",
+          content: this.form.content,
+          img_url: this.form.image_url,
+          status: this.form.status,
         });
         this.DialogVisible = false;
       } catch (err) {
         console.log(err);
-        // console.log(this.form.categoryId);
-        // console.log(this.form.id);
-        // console.log(this.form.title);
-        // console.log(this.form.create_date);
-        // console.log(this.form.content);
-        // console.log(this.form.image_url);
-        // console.log(this.form.status);
+        console.log(Number(this.form.categoryId));
+        console.log(Number(this.form.id));
+        console.log(this.form.title);
+        console.log(this.form.content);
+        console.log(this.form.image_url);
+        console.log(this.form.status);
       }
     },
   },

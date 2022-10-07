@@ -32,14 +32,12 @@
                 <span>{{ item.meta ? item.meta.title : "" }}</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item
-                  :index="i.path"
-                  v-for="i in item.children"
-                  :key="i.id"
-                >
-                  <i class="el-icon-menu"></i>
-                  {{ i.meta ? i.meta.title : "" }}</el-menu-item
-                >
+                <template v-for="i in item.children">
+                  <el-menu-item :index="i.path" v-if="!i.isshow" :key="i.id">
+                    <i class="el-icon-menu"></i>
+                    {{ i.meta ? i.meta.title : "" }}</el-menu-item
+                  >
+                </template>
               </el-menu-item-group>
             </el-submenu>
           </template>

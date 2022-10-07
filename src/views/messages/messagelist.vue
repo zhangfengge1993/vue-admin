@@ -80,13 +80,16 @@
       >
       </el-table-column>
       <el-table-column prop="custodian" label="管理人"> </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="300">
         <template slot-scope="scope">
           <el-button type="danger" size="mini" @click="deleteEdit(scope.row.id)"
             >删除</el-button
           >
           <el-button type="success" size="mini" @click="infoEdit(scope.row)"
             >编辑</el-button
+          >
+          <el-button type="success" size="mini" @click="infoDetails(scope.row)">
+            编辑详情</el-button
           >
         </template>
       </el-table-column>
@@ -247,11 +250,11 @@ export default {
     // 获取信息列表
     async newsgetlist() {
       let data = this.newdata();
-
       try {
         const res = await this.$store.dispatch("information/newsgetList", data);
         this.newslist = res.data.data;
         this.newstotal = res.data.total;
+        // console.log(res);
       } catch (err) {
         console.log(err);
       }
@@ -271,6 +274,7 @@ export default {
     infoEdit(id) {
       this.editDialogVisible = true;
       this.infodata = id;
+      console.log(this.infodata);
     },
     // 调用删除数据api
     async deleteEditapi() {
@@ -303,7 +307,6 @@ export default {
     // 全选获取的id
     deleteAllid(val) {
       this.newsinfoallid = val.map((item) => item.id);
-      console.log(this.newsinfoallid);
     },
     // 调用全部删除数据api
     async deleteAllEditapi() {
@@ -339,6 +342,16 @@ export default {
         }
       });
       return ClassifyName;
+    },
+    // 详情页跳转
+    infoDetails(data) {
+      this.$store.commit("infodetails/SET_DATE", data);
+      this.$router.push({
+        name: "messageDetails",
+        params: {
+          data: data,
+        },
+      });
     },
   },
 };
@@ -376,6 +389,9 @@ export default {
 }
 .messagelisttable {
   margin-bottom: 20px;
+}
+.cell a {
+  color: #fff;
 }
 .footerpage {
   display: flex;

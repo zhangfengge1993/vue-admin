@@ -68,6 +68,15 @@ const routes = [{
           title: '信息分类',
         }
       },
+      {
+        path: "/MessageDetails",
+        name: "messageDetails",
+        isshow: true,
+        component: () => import("../views/messages/messageDetails.vue"),
+        meta: {
+          title: '信息详情',
+        }
+      },
     ]
   },
 ];

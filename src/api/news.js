@@ -41,6 +41,14 @@ const newsapi = {
             data
         })
     },
+    // 七牛云
+    uploadImgToken(data) {
+        return base.request({
+            method: "post",
+            url: "/uploadImgToken/",
+            data
+        })
+    },
 
 }
 export default newsapi
