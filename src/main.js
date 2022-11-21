@@ -20,6 +20,12 @@ import 'element-ui/lib/theme-chalk/index.css';
 import 'default-passive-events'
 // 引入globalMethod 全局方法
 import globalMethod from "./reuse/globalMethod"
+// 引入全局按钮权限
+import {
+  buttonPermissions
+} from "./reuse/buttonPermissions"
+// 把buttonPermissions 挂载到vue 原型
+Vue.prototype.btnPer = buttonPermissions;
 // 把Cookies 挂载到vue 原型
 Vue.prototype.$cookie = Cookies;
 // 关闭生产模式下给出的提示
@@ -30,10 +36,14 @@ Vue.use(ElementUI);
 Vue.use(globalMethod);
 // 通过全局方法使用插件VueCompositionApi插件
 Vue.use(VueCompositionApi);
+
 // 创建vue实例对象
 new Vue({
   router,
   store,
   // render函数的作用就是返回一个虚拟dom，将该虚拟dom渲染成真实的dom
   render: (h) => h(App), //createElement 创建虚拟DOM
+  beforeCreate() {
+    Vue.prototype.$bus = this //安装全局事件总线，$bus就是当前应用的Vm
+  }
 }).$mount("#app"); //手动挂载到id为app的dom中的意思 该方法是直接挂载到入口文件index.html 的 id=app 的dom 元素上的

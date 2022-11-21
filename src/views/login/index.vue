@@ -136,6 +136,7 @@ export default {
       logindisabled: false,
       // 判断验证码的文字状态
       codebtntext: "验证码",
+      // 表单验证
       loginrules: {
         username: [{ validator: loginUsername, trigger: "blur" }],
         password: [{ validator: loginPassword, trigger: "blur" }],
@@ -233,7 +234,9 @@ export default {
           password: this.loginForm.password,
           code: this.loginForm.captcha,
         });
-        this.$router.push("/console");
+        // 这个的意思是在router 包升级后 login页面在跳转的时候抛出了一个promise异常 没有接收它 所以报了这个错误
+        this.$router.push("/console").catch(() => {});
+        // this.$router.replace("/console").catch(() => {});
       } catch (err) {
         console.log(err);
       }

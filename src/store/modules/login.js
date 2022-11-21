@@ -94,7 +94,19 @@ export default {
             removeToken()
             state.to_ken = ''
             state.user_name = ''
-        }
+            state.roles = []
+        },
+        // 角色权限
+        SET_ROLES(state, value) {
+            state.roles = value
+
+        },
+        // 按钮权限
+        SET_BUTTON(state, value) {
+            state.buttonPermissions = value
+
+        },
+
 
     },
     state: {
@@ -116,8 +128,12 @@ export default {
         to_ken: '',
         user_name: getUserName() || '',
         iscollapse: false,
+        // 角色权限
+        roles: [],
+        // 按钮权限
+        buttonPermissions: [],
     },
     getters: {
-
+        roles: state => state.roles,
     },
 }

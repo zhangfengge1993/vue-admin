@@ -24,6 +24,13 @@ const loginapi = {
             data
         })
     },
+    // 获取权限接口
+    roles(data) {
+        return base.request({
+            method: "post",
+            url: "/userRole/",
+            data
+        })
+    },
 }
 export default loginapi
-

@@ -15,7 +15,7 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
-    config.headers['Tokey'] = getToken()
+    config.headers['Token'] = getToken()
     config.headers['UserName'] = getUserName()
     return config;
 }, function (error) {
@@ -37,7 +37,6 @@ instance.interceptors.response.use(function (response) {
     // 对响应错误做点什么
     return Promise.reject(error);
 });
-
 
 
 export default instance

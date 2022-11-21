@@ -1,7 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
-const routes = [{
+// 默认路由
+export const defaultRouter = [{
     path: "/",
     redirect: 'login',
     isshow: true
@@ -43,20 +44,26 @@ const routes = [{
 
     ]
   },
-  {
+]
+// 动态路由
+// 角色:sale,technician,manager
+export const asynsRouter = [{
     path: "/message",
     name: "message",
     redirect: '/messagelist',
     component: () => import("../views/Console/index.vue"),
     meta: {
+      roles: ['sale'],
       title: '信息管理',
-      icon: '103'
+      icon: '103',
+
     },
     children: [{
         path: "/messagelist",
         name: "messagelist",
         component: () => import("../views/messages/messagelist.vue"),
         meta: {
+          roles: ['sale'],
           title: '信息列表',
         }
       },
@@ -65,6 +72,7 @@ const routes = [{
         name: "messageclassify",
         component: () => import("../views/messages/messageclassify.vue"),
         meta: {
+          roles: ['sale'],
           title: '信息分类',
         }
       },
@@ -74,12 +82,37 @@ const routes = [{
         isshow: true,
         component: () => import("../views/messages/messageDetails.vue"),
         meta: {
+          roles: ['sale'],
           title: '信息详情',
         }
       },
     ]
   },
-];
+  {
+    path: "/user",
+    name: "user",
+    redirect: '/userManagement',
+    component: () => import("../views/Console/index.vue"),
+    meta: {
+      roles: ['sale'],
+      title: '用户管理',
+      icon: '101'
+    },
+    children: [{
+        path: "/userManagement",
+        name: "userManagement",
+        component: () => import("../views/user/index.vue"),
+        meta: {
+          roles: ['sale'],
+          title: '用户管理',
+        }
+      },
+
+    ]
+
+  },
+]
+const routes = defaultRouter;
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,

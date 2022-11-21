@@ -40,6 +40,7 @@
             >
             </el-option>
           </el-select>
+          <!-- <ZfgSelect :config="formInline.options1" /> -->
         </el-form-item>
         <el-form-item>
           <el-form-item>
@@ -55,7 +56,10 @@
           </el-form-item>
         </el-form-item>
         <el-form-item>
-          <el-button type="danger" @click="addDialogVisible = true"
+          <el-button
+            type="danger"
+            @click="addDialogVisible = true"
+            v-if="btnPer('info:add')"
             >新增</el-button
           >
         </el-form-item>
@@ -82,13 +86,26 @@
       <el-table-column prop="custodian" label="管理人"> </el-table-column>
       <el-table-column label="操作" width="300">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="deleteEdit(scope.row.id)"
+          <el-button
+            type="danger"
+            size="mini"
+            v-if="btnPer('info:del')"
+            @click="deleteEdit(scope.row.id)"
             >删除</el-button
           >
-          <el-button type="success" size="mini" @click="infoEdit(scope.row)"
+          <el-button
+            type="success"
+            size="mini"
+            v-if="btnPer('info:edit')"
+            @click="infoEdit(scope.row)"
             >编辑</el-button
           >
-          <el-button type="success" size="mini" @click="infoDetails(scope.row)">
+          <el-button
+            type="success"
+            size="mini"
+            v-if="btnPer('info:detailed')"
+            @click="infoDetails(scope.row)"
+          >
             编辑详情</el-button
           >
         </template>
@@ -96,7 +113,11 @@
     </el-table>
     <!-- 底部分页 -->
     <div class="footerpage">
-      <el-button type="primary" size="mini" @click="deleteAllEdit"
+      <el-button
+        type="primary"
+        size="mini"
+        @click="deleteAllEdit"
+        v-if="btnPer('info:batchDel')"
         >批量删除</el-button
       >
       <el-pagination
@@ -133,9 +154,11 @@
 <script>
 import { MessageBox } from "element-ui";
 import AddDialog from "./addDialog.vue";
+import ZfgSelect from "../../components/Select";
+
 export default {
   // import引入的组件需要注入到对象中才能使用
-  components: { AddDialog },
+  components: { AddDialog, ZfgSelect },
   data() {
     // 这里存放数据
     return {
@@ -179,7 +202,7 @@ export default {
       // 删除信息
       newsinfoid: "",
       newsinfoallid: "",
-      infodata: [],
+      infodata: {},
     };
   },
   // 监听属性 类似于data概念
@@ -232,7 +255,7 @@ export default {
     },
     // 搜索
     search() {
-      let data = this.newdata();
+      // let data = this.newdata();
       this.newsgetlist();
     },
     // 获取需要搜索的数据
@@ -271,10 +294,10 @@ export default {
       });
     },
     // 修改数据
-    infoEdit(id) {
+    infoEdit(val) {
       this.editDialogVisible = true;
-      this.infodata = id;
-      console.log(this.infodata);
+      this.infodata = val;
+      // console.log(this.infodata, 11);
     },
     // 调用删除数据api
     async deleteEditapi() {
